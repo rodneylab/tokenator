@@ -1,3 +1,4 @@
+.DS_Store
+.cache
 /target
 rusty-tags.vi
-.cache
