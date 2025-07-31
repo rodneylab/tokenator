@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <img src="./images/rodneylab-github-tokenator.png" alt="Rodney Lab Tokenator Git Hub banner" />
 
 <p align="center">
