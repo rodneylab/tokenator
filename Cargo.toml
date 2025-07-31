@@ -1,0 +1,30 @@
+[package]
+name = "tokenator"
+version = "0.1.0"
+edition = "2024"
+license = "BSD-3-Clause"
+repository = "https://github.com/rodneylab/tokenator"
+# 2024 edition requires rust 1.85 or later
+rust-version = "1.85"
+description = "Count the number of tokens in an LLM prompt"
+
+[dependencies]
+ahash = "0.8.12"
+clap = { version = "4.5.41", features = ["derive"] }
+clap-verbosity-flag = "3.0.3"
+env_logger = "0.11.8"
+hf-hub = "0.4.3"
+inquire = "0.7.5"
+log = "0.4.27"
+miette = { version = "7.6.0", features = ["fancy"] }
+num-format = "0.4.4"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.141"
+strsim = "0.11.1"
+tokenizers = "0.21.2"
+
+[dev-dependencies]
+assert_fs = "1.1.3"
+insta = { version = "1.43.1", features = ["filters", "glob", "json", "redactions"] }
+rexpect = "0.6.0"
+trycmd = "0.15.8"

@@ -1,0 +1,5 @@
+ignore_patterns:
+  - "dprint.json"
+  - "justfile"
+  - "rusty-tags.vi"
+  - "yek.yaml"

@@ -1,0 +1,11 @@
+[
+  { "name": "codellama:7b", "hf": "codellama/CodeLlama-7b-hf" },
+  { "name": "codellama:latest", "hf": "codellama/CodeLlama-7b-hf" },
+  {
+    "name": "llama3.2-vision:latest",
+    "hf": "meta-llama/Llama-3.2-11B-Vision-Instruct"
+  },
+  { "name": "qwen2.5-coder:7b", "hf": "Qwen/Qwen2.5-Coder-7B-Instruct" },
+  { "name": "qwen3:1.7b", "hf": "Qwen/Qwen3-1.7B" },
+  { "name": "qwen3:8b", "hf": "Qwen/Qwen3-8B" }
+]

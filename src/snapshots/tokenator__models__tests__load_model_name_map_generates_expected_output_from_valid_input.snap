@@ -1,0 +1,8 @@
+---
+source: src/models.rs
+expression: outcome
+---
+{
+  "example:100b": "example/Example-100-B-most-capable",
+  "example:latest": "example/Example-1-M-state-of-the-art"
+}
