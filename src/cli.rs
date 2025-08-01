@@ -17,7 +17,7 @@ pub struct Cli {
     #[clap(short, long, value_parser)]
     pub file: Option<PathBuf>,
 
-    /// LLM models to count tokens for
+    /// LLM model to count tokens for
     #[clap(short, long, value_parser)]
     pub model: Option<String>,
 

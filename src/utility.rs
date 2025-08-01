@@ -11,13 +11,13 @@ pub fn read_file<P: AsRef<Path>>(path: P) -> miette::Result<String> {
     let metadata = fs::metadata(&path)
         .inspect_err(|err| match err.kind() {
             io::ErrorKind::NotFound => {
-                log::error!("File `{}` not found", path.as_ref().display())
+                log::error!("File `{}` not found", path.as_ref().display());
             }
             io::ErrorKind::PermissionDenied => {
                 log::error!(
                     "Insufficient permissions to read file `{}`",
                     path.as_ref().display()
-                )
+                );
             }
             _ => {
                 log::error!("Error reading from file `{}`", path.as_ref().display());
@@ -42,13 +42,13 @@ pub fn read_file<P: AsRef<Path>>(path: P) -> miette::Result<String> {
                 log::error!(
                     "Unable to read file `{}`.  Check it only contains valid UTF-8 data.",
                     path.as_ref().display()
-                )
+                );
             }
             io::ErrorKind::PermissionDenied => {
                 log::error!(
                     "Insufficient permissions to read file `{}`",
                     path.as_ref().display()
-                )
+                );
             }
             _ => {
                 log::error!("Error reading from file `{}`", path.as_ref().display());
