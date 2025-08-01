@@ -18,7 +18,7 @@ pub fn get_prompt<P: AsRef<Path>>(file: Option<P>, prompt: Option<&str>) -> miet
             log::error!(
                 "Error reading prompt file (`{}`): {err:?}",
                 value.as_ref().display()
-            )
+            );
         })?
     } else {
         prompt

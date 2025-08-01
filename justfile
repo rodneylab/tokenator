@@ -32,7 +32,7 @@ coverage:
 doc crate:
     cargo doc -p {{ crate }}
     @echo "`pwd`/target/doc/`echo \"{{ crate }}\" | tr - _ \
-        | sed 's/^rust_//' `/index.html" | pbcopy
+        | sed 's/^rust_//' | sed -E 's/@[0-9\.]+$//' `/index.html" | pbcopy
 
 # clean unreferenced insta snapshots
 insta-snapshot-clean:
