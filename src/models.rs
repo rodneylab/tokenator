@@ -5,7 +5,7 @@ use std::{
 };
 
 use inquire::Select;
-use miette::{Context, IntoDiagnostic, bail};
+use miette::{Context, IntoDiagnostic, bail, miette};
 use strsim::normalized_damerau_levenshtein;
 
 #[derive(serde::Deserialize)]
@@ -33,9 +33,10 @@ fn load_model_name_map<P: AsRef<Path>>(
         log::warn!("Models file `{}` is empty", path.as_ref().display());
     }
 
-    let result = models.into_iter().map(|val| (val.name, val.hf)).collect();
-
-    Ok(result)
+    Ok(models
+        .into_iter()
+        .map(|model| (model.name, model.hf))
+        .collect())
 }
 
 /// Suggests a model name based on the input name.  Useful if the input name does not match any
@@ -66,7 +67,7 @@ fn model_name_suggestion<'a>(
 ///
 /// # Returns
 /// A `miette::Result` containing the user-selected model name.
-fn get_model_name(
+fn get_user_selected_repo_id(
     model_name_map: &HashMap<String, String, ahash::RandomState>,
 ) -> miette::Result<String> {
     debug_assert!(!model_name_map.is_empty());
@@ -102,19 +103,25 @@ pub fn get_repo_id(
             model_map_path.display()
         );
     }
-    let model_name = match model_name {
-        Some(value) => value,
-        None => &get_model_name(&model_name_map)?,
-    };
-    match model_name_map.get(model_name) {
-        Some(value) => Ok(value.to_owned()),
-        None => {
-            if let Some(value) = model_name_suggestion(&model_name_map, model_name) {
-                bail!("No model matching `{model_name}`, did you mean `{value}`?");
+    match model_name {
+        Some(value) => {
+            if let Some(repo_id) = model_name_map.get(value) {
+                // Successfully matched user model name to a known repo
+                Ok(repo_id.to_owned())
             } else {
-                bail!("No model matching `{model_name}`.");
+                // Unable to match user-provided model name to a known repo
+                let error_message = match model_name_suggestion(&model_name_map, value) {
+                    Some(suggestion) => {
+                        format!("No model matching `{value}`, did you mean `{suggestion}`?")
+                    }
+                    // No suggestion available
+                    None => format!("No model matching `{value}`."),
+                };
+                Err(miette!(error_message))
             }
         }
+        // No model name provided; prompt the user for model name
+        None => get_user_selected_repo_id(&model_name_map),
     }
 }
 

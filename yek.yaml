@@ -1,4 +1,6 @@
 ignore_patterns:
+  - "CODE_OF_CONDUCT.md"
+  - "deny.toml"
   - "dprint.json"
   - "justfile"
   - "rusty-tags.vi"
