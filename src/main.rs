@@ -38,8 +38,8 @@ fn main() -> miette::Result<()> {
 
     let repo_id = get_repo_id(model.as_ref(), None)?;
     let tokeniser = create_tokeniser(&repo_id)?;
-    let prompt = get_prompt(file.clone(), prompt.as_deref())?;
-    let tokens = count_tokens(&tokeniser, &prompt)?;
+    let prompt_text = get_prompt(file.clone(), prompt.as_deref())?;
+    let tokens = count_tokens(&tokeniser, &prompt_text)?;
 
     println!("Prompt token count: {}", format_number(tokens));
 
