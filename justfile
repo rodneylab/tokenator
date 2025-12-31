@@ -18,9 +18,9 @@ coverage:
     rm -f tokenator-*.profraw 2>/dev/null
     cargo clean
     cargo build
-    C_COMPILER=$(brew --prefix llvm)/bin/clang RUSTFLAGS="-Cinstrument-coverage" \
+    C_COMPILER=$(brew --prefix llvm@20)/bin/clang RUSTFLAGS="-Cinstrument-coverage" \
         LLVM_PROFILE_FILE="tokenator-%p-%m.profraw" cargo test
-    grcov . -s . --binary-path ./target/debug/ -t html --branch --ignore-not-existing \
+    grcov . -s . --binary-path ./target/debug/ --llvm-path /usr/local/opt/llvm@20/bin -t html --branch --ignore-not-existing \
         -o ./target/debug/coverage/
     open --reveal ./target/debug/coverage
     sed -i '' "s|href=\"https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css\"|href=\"file://`pwd`/.cache/bulma.min.css\"|g" ./target/debug/coverage/**/*.html
