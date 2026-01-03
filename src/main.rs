@@ -1,6 +1,7 @@
 #![warn(clippy::all, clippy::pedantic)]
 
 mod cli;
+mod errors;
 mod models;
 mod prompt;
 mod token;
