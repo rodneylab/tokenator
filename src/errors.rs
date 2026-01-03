@@ -2,10 +2,13 @@
 #[error("{detail}")]
 pub struct HfApiError {
     #[help]
+    #[allow(unused_assignments)]
     pub advice: String,
 
+    #[allow(unused_assignments)]
     pub detail: String,
 
+    #[allow(unused_assignments)]
     pub cause: hf_hub::api::sync::ApiError,
 }
 
@@ -47,10 +50,13 @@ impl From<hf_hub::api::sync::ApiError> for HfApiError {
 #[error("{detail}")]
 pub struct TokenizerError {
     #[help]
+    #[allow(unused_assignments)]
     pub advice: String,
 
+    #[allow(unused_assignments)]
     pub detail: String,
 
+    #[allow(unused_assignments)]
     pub cause: tokenizers::tokenizer::Error,
 }
 
