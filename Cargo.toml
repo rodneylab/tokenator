@@ -10,11 +10,11 @@ description = "Count the number of tokens in an LLM prompt"
 
 [dependencies]
 ahash = "0.8.12"
-clap = { version = "4.5.59", features = ["derive"] }
+clap = { version = "4.5.60", features = ["derive"] }
 clap-verbosity-flag = "3.0.4"
 env_logger = "0.11.9"
-hf-hub = "0.4.3"
-inquire = "0.9.3"
+hf-hub = "0.5.0"
+inquire = "0.9.4"
 log = "0.4.29"
 miette = { version = "7.6.0", features = ["fancy"] }
 num-format = "0.4.4"
@@ -23,7 +23,6 @@ serde_json = "1.0.149"
 strsim = "0.11.1"
 thiserror = "2.0.18"
 tokenizers = "0.22.2"
-ureq = "2.12.1"
 
 [dev-dependencies]
 assert_fs = "1.1.3"
