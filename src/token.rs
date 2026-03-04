@@ -9,7 +9,18 @@ use crate::errors::{AppError, HfApiError, TokenizerError};
 /// # Returns
 /// A `miette::Result` containing the tokenizer.
 pub fn create_tokeniser(repo_id: &str) -> Result<Tokenizer, AppError> {
-    let api = ApiBuilder::new().build().map_err(HfApiError::from)?;
+    let token = std::env::var("HUGGING_FACE_ACCESS_TOKEN").ok().or_else(|| {
+        log::warn!(
+            "`HUGGING_FACE_ACCESS_TOKEN` environment variable is not defined, using Hugging \
+            Face API without an access token.  Performance may vary."
+        );
+
+        None
+    });
+    let api = ApiBuilder::new()
+        .with_token(token)
+        .build()
+        .map_err(HfApiError::from)?;
     let repo = api.repo(Repo::with_revision(
         repo_id.to_owned(),
         RepoType::Model,

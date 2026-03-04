@@ -79,7 +79,10 @@ fn get_user_selected_repo_id(
         .into_diagnostic()
         .wrap_err("Getting user model choice")?;
 
-    Ok(choice.to_owned())
+    Ok(model_name_map
+        .get(choice)
+        .expect("Choice should be in the model name map")
+        .to_owned())
 }
 
 /// Retrieves the repository ID based on the model name.
@@ -213,9 +216,7 @@ mod tests {
         assert!(outcome.is_empty());
     }
 
-    #[test]
-    fn model_name_suggestion_returns_closest_match() {
-        // arrange
+    fn get_model_name_map_fixture() -> HashMap<String, String, ahash::RandomState> {
         let hasher = ahash::RandomState::new();
         let mut model_name_map: HashMap<String, String, ahash::RandomState> =
             HashMap::with_hasher(hasher);
@@ -231,6 +232,14 @@ mod tests {
             "example-model:7b".to_owned(),
             "example/Example-7-B".to_owned(),
         );
+
+        model_name_map
+    }
+
+    #[test]
+    fn model_name_suggestion_returns_closest_match() {
+        // arrange
+        let model_name_map = get_model_name_map_fixture();
         let input_name = "example_model";
 
         // act

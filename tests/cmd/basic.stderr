@@ -1,0 +1,11 @@
+[?2004h[?25l[38;5;10m?[39m Which model are you using?
+[38;5;14m>[39m [38;5;14mcodellama:7b[39m
+[38;5;14m [39m codellama:latest
+[38;5;14m [39m llama3.2-vision:latest
+[38;5;14m [39m qwen2.5-coder:7b
+[38;5;14m [39m qwen3:1.7b
+[38;5;14m [39m qwen3:8b
+[38;5;14m[[39m[38;5;14m↑↓ to move, enter to select, type to filter[39m[38;5;14m][39m
+[7A[29C[?25h[8B[29D[?25h[?2004lError:   × Getting user model choice
+  ├─▶ IO error: Failed to initialize input reader
+  ╰─▶ Failed to initialize input reader
