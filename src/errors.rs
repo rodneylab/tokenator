@@ -14,10 +14,27 @@ pub struct HfApiError {
 
 impl From<hf_hub::api::sync::ApiError> for HfApiError {
     fn from(value: hf_hub::api::sync::ApiError) -> Self {
-        Self {
-            advice: "Check Hugging Face configuration".to_owned(),
-            detail: format!("{value:?}"),
-            cause: value,
+        match value {
+            hf_hub::api::sync::ApiError::RequestError(ref err) => match **err {
+                ureq::Error::StatusCode(404) => Self {
+                    advice: "Check the repo listed in the `models.json` file is correct, the repo \
+                        is for a model and that the repo has a `tokenizer.json` file in the root \
+                        directory."
+                        .to_owned(),
+                    detail: format!("{value:?}"),
+                    cause: value,
+                },
+                _ => Self {
+                    advice: "Check Hugging Face configuration".to_owned(),
+                    detail: format!("{value:?}"),
+                    cause: value,
+                },
+            },
+            _ => Self {
+                advice: "Check Hugging Face configuration".to_owned(),
+                detail: format!("{value:?}"),
+                cause: value,
+            },
         }
     }
 }

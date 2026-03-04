@@ -8,6 +8,7 @@ mod token;
 mod utility;
 
 use clap::Parser;
+use dotenvy::dotenv;
 use num_format::Locale;
 
 use crate::{
@@ -27,6 +28,7 @@ fn format_number(number: usize) -> String {
 /// Main function to run the token counting tool.
 fn main() -> miette::Result<()> {
     let cli = &Cli::parse();
+    dotenv().ok();
     env_logger::Builder::new()
         .filter_level(cli.verbose.log_level_filter())
         .init();
@@ -50,6 +52,11 @@ fn main() -> miette::Result<()> {
 #[cfg(test)]
 mod tests {
     use crate::format_number;
+
+    #[test]
+    fn cli_tests() {
+        trycmd::TestCases::new().case("tests/cmd/*.toml");
+    }
 
     #[test]
     fn format_number_generates_expected_output_for_valid_input() {
