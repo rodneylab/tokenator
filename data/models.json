@@ -7,5 +7,6 @@
   },
   { "name": "qwen2.5-coder:7b", "hf": "Qwen/Qwen2.5-Coder-7B-Instruct" },
   { "name": "qwen3:1.7b", "hf": "Qwen/Qwen3-1.7B" },
-  { "name": "qwen3:8b", "hf": "Qwen/Qwen3-8B" }
+  { "name": "qwen3:8b", "hf": "Qwen/Qwen3-8B" },
+  { "name": "qwen3.5:9b", "hf": "Qwen/Qwen3.5-9B" }
 ]
