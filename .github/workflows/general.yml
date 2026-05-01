@@ -10,6 +10,7 @@ on:
 permissions: read-all
 env:
   CARGO_TERM_COLOR: always
+  CLICOLOR: 1
   RUSTFLAGS: "-Dwarnings -Cinstrument-coverage"
   LLVM_PROFILE_FILE: "tokenator-%p-%m.profraw"
 jobs:
