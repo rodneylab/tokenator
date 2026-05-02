@@ -13,6 +13,9 @@ expects:
 clean:
     rm -f tokenator-*.profraw 2>/dev/null
 
+integration-tests:
+    cargo test --test '*'
+
 # run coverage using grcov
 coverage:
     rm -f tokenator-*.profraw 2>/dev/null

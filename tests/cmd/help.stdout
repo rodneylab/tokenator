@@ -1,0 +1,14 @@
+Count the number of tokens in an LLM prompt
+
+Usage: tokenator [OPTIONS] [PROMPT]
+
+Arguments:
+  [PROMPT]  Prompt
+
+Options:
+  -v, --verbose...     Increase logging verbosity
+  -q, --quiet...       Decrease logging verbosity
+  -f, --file <FILE>    Optional file to use as a prompt
+  -m, --model <MODEL>  LLM model to count tokens for
+  -h, --help           Print help
+  -V, --version        Print version

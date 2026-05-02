@@ -1,0 +1,3 @@
+bin.name = "tokenator"
+args = "--help"
+status.code = 0
