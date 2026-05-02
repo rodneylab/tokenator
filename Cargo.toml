@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2024"
 license = "BSD-3-Clause"
 repository = "https://github.com/rodneylab/tokenator"
-# 2024 edition requires rust 1.85 or later
-rust-version = "1.85"
+# hf-hub 0.5.0 requires rust 1.88 or later
+rust-version = "1.88"
 description = "Count the number of tokens in an LLM prompt"
 
 [dependencies]
