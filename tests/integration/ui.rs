@@ -1,7 +1,7 @@
 use rexpect::spawn;
 
 #[test]
-fn get_model_name_displays_model_list() {
+fn get_model_name_displays_expected_prompts_reading_code_from_stdin() {
     let mut p = spawn(
         r#"./target/debug/tokenator 'println!("Made it here!");'"#,
         Some(5_000),
