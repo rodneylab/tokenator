@@ -1,6 +1,7 @@
 [
   { "name": "codellama:7b", "hf": "codellama/CodeLlama-7b-hf" },
   { "name": "codellama:latest", "hf": "codellama/CodeLlama-7b-hf" },
+  { "name": "glm-4.7-flash", "hf": "zai-org/GLM-4.7-Flash" },
   {
     "name": "llama3.2-vision:latest",
     "hf": "meta-llama/Llama-3.2-11B-Vision-Instruct"
