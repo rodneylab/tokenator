@@ -1,22 +1,41 @@
+use std::io;
+
+use http::StatusCode;
+
+#[derive(Debug, miette::Diagnostic, thiserror::Error)]
+#[error("{detail}")]
+pub struct InvalidRepoIdError {
+    #[help]
+    advice: String,
+
+    detail: String,
+}
+
+impl InvalidRepoIdError {
+    pub fn new<S: Into<String>>(id: S) -> Self {
+        Self {
+            advice: String::from("Make sure the repo id matches the `<owner>/<name>` pattern"),
+            detail: format!("{} does not match the expect repo ID format", id.into()),
+        }
+    }
+}
+
 #[derive(Debug, miette::Diagnostic, thiserror::Error)]
 #[error("{detail}")]
 pub struct HfApiError {
     #[help]
-    #[allow(unused_assignments)]
     pub advice: String,
 
-    #[allow(unused_assignments)]
     pub detail: String,
 
-    #[allow(unused_assignments)]
-    pub cause: hf_hub::api::sync::ApiError,
+    pub cause: hf_hub::HFError,
 }
 
-impl From<hf_hub::api::sync::ApiError> for HfApiError {
-    fn from(value: hf_hub::api::sync::ApiError) -> Self {
+impl From<hf_hub::HFError> for HfApiError {
+    fn from(value: hf_hub::HFError) -> Self {
         match value {
-            hf_hub::api::sync::ApiError::RequestError(ref err) => match **err {
-                ureq::Error::StatusCode(404) => Self {
+            hf_hub::HFError::Request { ref source, .. } => match source.status() {
+                Some(StatusCode::NOT_FOUND) => Self {
                     advice: "Check the repo listed in the `models.json` file is correct, the repo \
                         is for a model and that the repo has a `tokenizer.json` file in the root \
                         directory."
@@ -39,17 +58,45 @@ impl From<hf_hub::api::sync::ApiError> for HfApiError {
     }
 }
 
+/// Input/output error
+#[derive(Debug, miette::Diagnostic, thiserror::Error)]
+#[error("{detail}")]
+pub struct IoError {
+    /// User-focused remedial suggestion
+    #[help]
+    advice: String,
+
+    /// Error detail
+    detail: String,
+}
+
+impl IoError {
+    pub fn from_io_with_context<S: Into<String>>(error: &io::Error, cause_action: S) -> Self {
+        match error.kind() {
+            io::ErrorKind::NotFound => Self {
+                advice: "Check the path exists".to_owned(),
+                detail: format!("{error} while {}", cause_action.into()),
+            },
+            io::ErrorKind::PermissionDenied => Self {
+                advice: "Check you have access permissions".to_owned(),
+                detail: format!("{error} while {}", cause_action.into()),
+            },
+            _ => Self {
+                advice: "Check the path exists with access permissions".to_owned(),
+                detail: format!("{error} while {}", cause_action.into()),
+            },
+        }
+    }
+}
+
 #[derive(Debug, miette::Diagnostic, thiserror::Error)]
 #[error("{detail}")]
 pub struct TokenizerError {
     #[help]
-    #[allow(unused_assignments)]
     pub advice: String,
 
-    #[allow(unused_assignments)]
     pub detail: String,
 
-    #[allow(unused_assignments)]
     pub cause: tokenizers::tokenizer::Error,
 }
 
@@ -70,6 +117,16 @@ pub enum AppError {
     #[diagnostic_source]
     #[error(transparent)]
     HfApi(#[from] HfApiError),
+
+    #[diagnostic(transparent)]
+    #[diagnostic_source]
+    #[error(transparent)]
+    InvalidRepoId(#[from] InvalidRepoIdError),
+
+    #[diagnostic(transparent)]
+    #[diagnostic_source]
+    #[error(transparent)]
+    Io(#[from] IoError),
 
     #[diagnostic(transparent)]
     #[diagnostic_source]

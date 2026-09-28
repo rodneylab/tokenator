@@ -1,14 +1,15 @@
-use hf_hub::{Repo, RepoType, api::sync::ApiBuilder};
+use hf_hub::HFClient;
 use tokenizers::Tokenizer;
 
 use crate::errors::{AppError, HfApiError, TokenizerError};
 
-/// Creates a tokenizer instance based on the repository ID. `hf_hub` caches `tokenizer.json`
-/// files, so they should only be downloaded once for each model.
+/// Creates a tokenizer instance based on the repository owner and name. `hf_hub` caches
+/// `tokenizer.json` files, so they should only be downloaded once for each model (see
+/// <https://docs.rs/hf-hub/latest/hf_hub/struct.HFClientBuilder.html#method.cache_dir>).
 ///
 /// # Returns
-/// A `miette::Result` containing the tokenizer.
-pub fn create_tokeniser(repo_id: &str) -> Result<Tokenizer, AppError> {
+/// Generated tokeniser.
+pub async fn create_tokeniser(repo_owner: &str, repo_name: &str) -> Result<Tokenizer, AppError> {
     let token = std::env::var("HUGGING_FACE_ACCESS_TOKEN").ok().or_else(|| {
         log::warn!(
             "`HUGGING_FACE_ACCESS_TOKEN` environment variable is not defined, using Hugging \
@@ -17,16 +18,21 @@ pub fn create_tokeniser(repo_id: &str) -> Result<Tokenizer, AppError> {
 
         None
     });
-    let api = ApiBuilder::new()
-        .with_token(token)
-        .build()
+    let client = if let Some(token) = token {
+        HFClient::builder()
+            .token(&token)
+            .build()
+            .map_err(HfApiError::from)?
+    } else {
+        HFClient::new().map_err(HfApiError::from)?
+    };
+    let repo = client.model(repo_owner, repo_name);
+    let tokeniser_filename = repo
+        .download_file()
+        .filename("tokenizer.json")
+        .send()
+        .await
         .map_err(HfApiError::from)?;
-    let repo = api.repo(Repo::with_revision(
-        repo_id.to_owned(),
-        RepoType::Model,
-        "main".to_owned(),
-    ));
-    let tokeniser_filename = repo.get("tokenizer.json").map_err(HfApiError::from)?;
 
     Ok(Tokenizer::from_file(tokeniser_filename).map_err(TokenizerError::from)?)
 }
@@ -52,23 +58,25 @@ pub fn count_tokens(tokeniser: &Tokenizer, prompt: &str) -> Result<usize, AppErr
 mod tests {
     use crate::token::{count_tokens, create_tokeniser};
 
-    #[test]
-    fn create_tokeniser_returns_expected_value() {
+    #[tokio::test]
+    async fn create_tokeniser_returns_expected_value() {
         // arrange
-        let repo_id = "Qwen/Qwen3-1.7B";
+        let owner = "Qwen";
+        let name = "Qwen3-1.7B";
 
         // act
-        let tokeniser = create_tokeniser(repo_id);
+        let tokeniser = create_tokeniser(owner, name).await;
 
         // assert
         assert!(tokeniser.is_ok());
     }
 
-    #[test]
-    fn count_tokens_returns_expected_value() {
+    #[tokio::test]
+    async fn count_tokens_returns_expected_value() {
         // arrange
-        let repo_id = "Qwen/Qwen3-1.7B";
-        let tokeniser = create_tokeniser(repo_id).unwrap();
+        let owner = "Qwen";
+        let name = "Qwen3-1.7B";
+        let tokeniser = create_tokeniser(owner, name).await.unwrap();
 
         // act
         let count = count_tokens(&tokeniser, "Why is the sky blue?").unwrap();

@@ -7,12 +7,15 @@ mod prompt;
 mod token;
 mod utility;
 
+use std::io::{BufWriter, Write};
+
 use clap::Parser;
 use dotenvy::dotenv;
 use num_format::Locale;
 
 use crate::{
     cli::Cli,
+    errors::{InvalidRepoIdError, IoError},
     models::get_repo_id,
     prompt::get_prompt,
     token::{count_tokens, create_tokeniser},
@@ -26,7 +29,8 @@ fn format_number(number: usize) -> String {
 }
 
 /// Main function to run the token counting tool.
-fn main() -> miette::Result<()> {
+#[tokio::main]
+async fn main() -> miette::Result<()> {
     let cli = &Cli::parse();
     dotenv().ok();
     env_logger::Builder::new()
@@ -39,12 +43,26 @@ fn main() -> miette::Result<()> {
         ..
     } = cli;
 
+    let stdout = std::io::stdout();
+    let mut stdout_handle = BufWriter::new(stdout.lock());
+
     let repo_id = get_repo_id(model.as_ref(), None)?;
-    let tokeniser = create_tokeniser(&repo_id)?;
+    let (owner, name) = repo_id
+        .split_once('/')
+        .ok_or(InvalidRepoIdError::new(&repo_id))?;
+    let tokeniser = create_tokeniser(owner, name).await?;
     let prompt_text = get_prompt(file.clone(), prompt.as_deref())?;
     let tokens = count_tokens(&tokeniser, &prompt_text)?;
 
-    println!("Prompt token count: {}", format_number(tokens));
+    writeln!(
+        &mut stdout_handle,
+        "Prompt token count: {}",
+        format_number(tokens)
+    )
+    .map_err(|err| IoError::from_io_with_context(&err, "writing to stdout"))?;
+    stdout_handle
+        .flush()
+        .map_err(|err| IoError::from_io_with_context(&err, "writing to stdout"))?;
 
     Ok(())
 }

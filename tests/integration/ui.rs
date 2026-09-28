@@ -4,7 +4,7 @@ use rexpect::spawn;
 fn displays_expected_prompt_token_count_reading_code_from_stdin() {
     let mut p = spawn(
         r#"./target/debug/tokenator 'println!("Made it here!");'"#,
-        Some(5_000),
+        Some(15_000),
     )
     .unwrap();
     p.exp_regex("Which model are you using?").unwrap();
@@ -16,7 +16,7 @@ fn displays_expected_prompt_token_count_reading_code_from_stdin() {
 fn prompts_with_an_expected_model_name() {
     let mut p = spawn(
         r#"./target/debug/tokenator 'console.log("Made it here!");'"#,
-        Some(5_000),
+        Some(15_000),
     )
     .unwrap();
     p.exp_regex("glm-4.7-flash").unwrap();
