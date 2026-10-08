@@ -15,7 +15,7 @@ use crate::utility::read_file;
 pub fn get_prompt<P: AsRef<Path>>(file: Option<P>, prompt: Option<&str>) -> miette::Result<String> {
     let prompt = if let Some(value) = file {
         read_file(&value).inspect_err(|err| {
-            log::error!(
+            tracing::error!(
                 "Error reading prompt file (`{}`): {err:?}",
                 value.as_ref().display()
             );

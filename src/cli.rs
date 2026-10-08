@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use clap_verbosity_flag::Verbosity;
+use tracing_subscriber::FmtSubscriber;
 
 /// Command-line interface configuration.
 ///
@@ -17,7 +18,7 @@ pub struct Cli {
     #[clap(short, long, value_parser)]
     pub file: Option<PathBuf>,
 
-    /// LLM model to count tokens for
+    /// LLM to count tokens for
     #[clap(short, long, value_parser)]
     pub model: Option<String>,
 
@@ -25,11 +26,25 @@ pub struct Cli {
     pub prompt: Option<String>,
 }
 
+impl Cli {
+    /// Configure global tracing using verbosity flags provided in CLI arguments.
+    ///
+    /// Initialises a global logger, and should be called once at most.
+    pub fn initialise_logging(&self) {
+        let subscriber = FmtSubscriber::builder()
+            .with_max_level(self.verbose)
+            .finish();
+        tracing::subscriber::set_global_default(subscriber)
+            .expect("should only be a single global tracing subscriber");
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::ffi::OsString;
 
     use clap::Parser;
+    use clap_verbosity_flag::log::Level;
 
     use crate::cli::Cli;
 
@@ -51,7 +66,7 @@ mod tests {
         let cli = parse_args(&args);
 
         // assert
-        assert_eq!(cli.verbose.log_level(), Some(log::Level::Error));
+        assert_eq!(cli.verbose.log_level(), Some(Level::Error));
     }
 
     #[test]
@@ -63,7 +78,7 @@ mod tests {
         let cli = parse_args(&args);
 
         // assert
-        assert_eq!(cli.verbose.log_level(), Some(log::Level::Warn));
+        assert_eq!(cli.verbose.log_level(), Some(Level::Warn));
     }
 
     #[test]
@@ -75,6 +90,6 @@ mod tests {
         let cli = parse_args(&args);
 
         // assert
-        assert_eq!(cli.verbose.log_level(), Some(log::Level::Info));
+        assert_eq!(cli.verbose.log_level(), Some(Level::Info));
     }
 }
