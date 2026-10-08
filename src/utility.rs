@@ -31,7 +31,7 @@ pub fn read_file<P: AsRef<Path>>(path: P) -> miette::Result<String> {
         .wrap_err(format!("Error opening file `{}`", path.as_ref().display()))?;
     let filesize = metadata.len();
     if filesize > 10_485_760 {
-        bail!("File is too large.")
+        bail!("File is too large.");
     }
     if filesize == 0 {
         log::warn!("File `{}` is empty.", path.as_ref().display());
@@ -208,7 +208,7 @@ mod tests {
         let result = read_file(&file_path).unwrap();
 
         // assert
-        assert!(result.is_empty());
+        assert_eq!(result, "");
 
         // cleanup
         temp_dir.close().unwrap();
