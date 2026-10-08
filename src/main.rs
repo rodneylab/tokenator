@@ -33,9 +33,8 @@ fn format_number(number: usize) -> String {
 async fn main() -> miette::Result<()> {
     let cli = &Cli::parse();
     dotenv().ok();
-    env_logger::Builder::new()
-        .filter_level(cli.verbose.log_level_filter())
-        .init();
+    cli.initialise_logging();
+
     let Cli {
         model,
         file,

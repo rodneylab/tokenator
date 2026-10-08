@@ -30,7 +30,7 @@ fn load_model_name_map<P: AsRef<Path>>(
         .into_diagnostic()
         .wrap_err("Parsing models JSON file")?;
     if models.is_empty() {
-        log::warn!("Models file `{}` is empty", path.as_ref().display());
+        tracing::warn!("Models file `{}` is empty", path.as_ref().display());
     }
 
     Ok(models
@@ -51,7 +51,7 @@ fn model_name_suggestion<'a>(
 ) -> Option<&'a str> {
     model_name_map
         .iter()
-        // returns an [`Option`] of the HashMap element with closest match (None if this fails)
+        // returns an [`Option`] of the `HashMap` element with closest match (None if this fails)
         .max_by(|(key_a, _), (key_b, _)| {
             normalized_damerau_levenshtein(key_a, input_name)
                 .partial_cmp(&normalized_damerau_levenshtein(key_b, input_name))
@@ -59,7 +59,7 @@ fn model_name_suggestion<'a>(
                     "distances should be in range [0,1] and so, partial_cmp should return `Some`",
                 )
         })
-        // maps option on closest HashMap element to `&str`
+        // maps option on closest `HashMap` element to `&str`
         .map(|(suggestion_key, _suggestion_hf)| suggestion_key.as_str())
 }
 

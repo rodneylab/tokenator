@@ -9,6 +9,6 @@ Options:
   -v, --verbose...     Increase logging verbosity
   -q, --quiet...       Decrease logging verbosity
   -f, --file <FILE>    Optional file to use as a prompt
-  -m, --model <MODEL>  LLM model to count tokens for
+  -m, --model <MODEL>  LLM to count tokens for
   -h, --help           Print help
   -V, --version        Print version

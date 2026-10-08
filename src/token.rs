@@ -11,7 +11,7 @@ use crate::errors::{AppError, HfApiError, TokenizerError};
 /// Generated tokeniser.
 pub async fn create_tokeniser(repo_owner: &str, repo_name: &str) -> Result<Tokenizer, AppError> {
     let token = std::env::var("HUGGING_FACE_ACCESS_TOKEN").ok().or_else(|| {
-        log::warn!(
+        tracing::warn!(
             "`HUGGING_FACE_ACCESS_TOKEN` environment variable is not defined, using Hugging \
             Face API without an access token.  Performance may vary."
         );
